@@ -10,14 +10,15 @@ const FormulaInput = () => {
   const { tokens, addToken, removeToken, evaluateFormula } = useFormulaStore();
   const [inputValue, setInputValue] = useState("");
   const { data: suggestions } = useAutocomplete();
+  const [calculationResult, setCalculationResult] = useState<number | string>(''); // New state to store calculation result
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim()) {
       const newToken: FormulaToken = {
         id: crypto.randomUUID(),
-        name: inputValue,  // The name is the raw input (e.g., "tag1")
-        value: isNaN(Number(inputValue)) ? 0 : +inputValue,  // Convert to number or 0 if not a valid number
-        type: isNaN(Number(inputValue)) ? "variable" : "number",  // Determine type (variable or number)
+        name: inputValue, // The name is the raw input (e.g., "tag1")
+        value: isNaN(Number(inputValue)) ? 0 : +inputValue, // Convert to number or 0 if not a valid number
+        type: isNaN(Number(inputValue)) ? "variable" : "number", // Determine type (variable or number)
       };
       addToken(newToken);
       setInputValue("");
@@ -36,7 +37,7 @@ const FormulaInput = () => {
 
   const handleCalculate = () => {
     const result = evaluateFormula();
-    console.log("Calculated Result: ", result);
+    setCalculationResult(result); // Store the result in state
   };
 
   return (
@@ -79,6 +80,13 @@ const FormulaInput = () => {
           Calculate
         </button>
       </div>
+      
+      {/* Displaying the calculation result */}
+      {calculationResult !== null && (
+        <div className="mt-4">
+          <strong>Calculation Result: </strong>{calculationResult}
+        </div>
+      )}
     </>
   );
 };
